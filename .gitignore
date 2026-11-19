@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDE / he dieu hanh
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Du lieu nguoi dung (chi giu cau truc thu muc)
+data/input/*
+data/reference/*
+!data/input/.gitkeep
+!data/reference/.gitkeep
+
+# Ket qua sinh tu dong (chi giu cau truc thu muc)
+outputs/images/*
+outputs/plots/*
+outputs/logs/*
+!outputs/images/.gitkeep
+!outputs/plots/.gitkeep
+!outputs/logs/.gitkeep
+
