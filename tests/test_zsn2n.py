@@ -5,7 +5,11 @@ import unittest
 import torch
 import torch.nn.functional as F
 
-from src.input_utils import set_reproducible
+from src.input_utils import (
+    add_noise,
+    make_synthetic_clean_image,
+    set_reproducible,
+)
 from src.losses import loss_func
 from src.model import network
 from src.pair_downsampler import pair_downsampler
@@ -66,6 +70,21 @@ class TestZSN2N(unittest.TestCase):
         self.assertTrue(all(gradient is not None for gradient in gradients))
         self.assertTrue(all(torch.isfinite(gradient).all() for gradient in gradients))
         self.assertGreater(sum(g.abs().sum().item() for g in gradients), 0.0)
+
+    def test_07_add_noise_gaussian_and_poisson(self) -> None:
+        clean = make_synthetic_clean_image(size=64)
+        self.assertEqual(clean.shape, (1, 3, 64, 64))
+        self.assertTrue((clean >= 0.0).all() and (clean <= 1.0).all())
+
+        noisy_gauss = add_noise(clean, noise_type="gauss", noise_level=25.0)
+        self.assertEqual(noisy_gauss.shape, clean.shape)
+        self.assertTrue((noisy_gauss >= 0.0).all() and (noisy_gauss <= 1.0).all())
+        self.assertFalse(torch.equal(clean, noisy_gauss))
+
+        noisy_poiss = add_noise(clean, noise_type="poiss", noise_level=30.0)
+        self.assertEqual(noisy_poiss.shape, clean.shape)
+        self.assertTrue((noisy_poiss >= 0.0).all() and (noisy_poiss <= 1.0).all())
+        self.assertFalse(torch.equal(clean, noisy_poiss))
 
 
 if __name__ == "__main__":
